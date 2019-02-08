@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<link rel="icon" href="images/favicon.png" type="image/x-icon" />
+		<title>Trivia Quiz</title>
+		<link rel="stylesheet" type="text/css" href="app.css">
+		<link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+	</head>
+	<body>
+		<span id="answer-result"></span>
+		<div id='container'>
+			<div class="errors">We haven't caught onto you yet!</div>
+			<div id="intro">
+				<div id='title'>
+					<h1 id="quiz-title">Welcome to Trivia quiz!</h1>
+				</div>
+				<div id="number-of-players-section">
+					Select the number of players
+					<br><br>
+					<label class="container player-number-padding"><input id="dva" type="radio" name="number-of-players" value="1"/> 
+						<span class="checkmark"></span>
+					</label>
+					1
+					<br><br>
+					<label class="container player-number-padding"><input id="jedan" type="radio" name="number-of-players" value="2"/> 
+						<span class="checkmark"></span>
+					</label>
+					2
+					<br><br>
+					<button class='button' id='next'>
+						Next
+				</div>
+				<div id="player-name-section" style="display:none;">
+					<div class="form-element">
+						<input class="form-control form-control-white form-element-field" type="text" id="one-player" name="name" placeholder="Enter your name">
+						<div class="form-element-bar form-element-bar-white"></div>
+						<label class="form-element-label form-element-label-white" for="name">
+							How should we call you?
+						</label>
+					</div>
+					<br><br>
+					<button class='button start start-game-1'>
+						Let's go!
+					</button>
+				</div>
+				<div id="player-names-section" style="display:none;;">
+					<div class="form-element">
+						<input class="form-control form-control-white form-element-field" type="text" id="first-player" name="name" placeholder="Enter your name">
+						<div class="form-element-bar form-element-bar-white"></div>
+						<label class="form-element-label form-element-label-white" for="name">
+							How should we call you?
+						</label>
+					</div>
+					<br><br>
+					<div class="form-element">
+						<input class="form-control form-control-white form-element-field" type="text" id="second-player" name="name" placeholder="Enter your opponent's name">
+						<div class="form-element-bar form-element-bar-white"></div>
+						<label class="form-element-label form-element-label-white" for="name">
+							How should we call your opponent?
+						</label>
+					</div>
+					<br><br>
+					<button class="button start start-game-2">Let's go!</button>
+				</div>
+			</div>
+			<div id="quiz">
+				<h3 id="round-number"><span id="player-turn"></span></h1>
+				<h1 id="player-one"></h1>
+				<h1 id="first-player-score">0</h1>
+				<h1 id="player-two"></h1>
+				<h1 id="second-player-score">0</h1>
+				<div id='title'> 
+					<h1 id="round">Round 1</h1>
+				</div>
+				<div id='question-area'></div>
+				<span id="highscore">Highscore</span>
+				<button id="submit" class="button">Submit</button>
+				<button id="next-question" class="button">Next question</button>
+				<button id="restart" class="button">Next round</button>
+				<div id="progress">
+					<div id="bar">0%</div>
+				</div>
+			</div>
+		</div>
+	</body>
+	<script type='text/javascript' src='jquery.js'></script>
+	<script type='text/javascript' src='app.js' charset="utf-8"></script>
+</html>
