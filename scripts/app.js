@@ -1,73 +1,93 @@
-// Animacije (round, bodovi, submit)
-// Forme
-// Nakon question 5 makni next question i stavi text 'next'
-// Nakon što se završi game pokazuje se next question nakon 5. pitanja a ne next round
-// Reorganizacija i strukturizacija funkcija i varijabli
-// Odabir kategorizacije i težine pitanja
-
-// Variables
-let first_player, second_player, number_of_players, user_answers = [],
+let first_player, second_player, number_of_players, category, category_name, difficulty, user_answers = [],
     correct_answer_messages = [], incorrect_answer_messages = [],
     highscore = 0, width = 0, question_counter = 0, submit_clicked = 0,
     round = 1, question_counter_for_title = 0, elem = $('#bar'),
-    question_area = $('#question-area'); number_of_points_first = $('#first-player-score').html(),
+    question_area = $('#question-area');
+number_of_points_first = $('#first-player-score').html(),
     run = $('#round'), number_of_points_second = $('#second-player-score').html(),
-    points = $('<p>'), helper_counter = -1;
-
-let questions = [];
-let incorrect_answers = [];
-let correct_answer = [];
+    points = $('<p>'), helper_counter = -1, questions = [], incorrect_answers = [],
+    correct_answer = [], answer_selected = 0;
 
 localStorage.setItem('highscore', 0);
 
-// Intro event handler depending how many players are selected
-$('#next').on('click', function() {
-    // Check how many players were selected
+$('input[name="number-of-players"]').change(function () {
+    $('#select-the-number-of-players').removeClass('not-allowed');
+    $('#select-the-number-of-players').addClass('button');
+});
+
+$('input[name="category"]').change(function () {
+    $('#choose-category').removeClass('not-allowed');
+    $('#choose-category').addClass('button');
+});
+
+$('input[name="difficulty"]').change(function () {
+    $('#choose-difficulty').removeClass('not-allowed');
+    $('#choose-difficulty').addClass('button');
+});
+
+$('input[name="name"]').on('keyup', function () {
+    if (number_of_players == 1) {
+        if ($('#first-player').val().length > 0) {
+            $('#enter-player-names').removeClass('not-allowed');
+            $('#enter-player-names').addClass('button');
+        } else {
+            $('#enter-player-names').removeClass('button');
+            $('#enter-player-names').addClass('not-allowed');
+        }
+    } else {
+        if ($('#first-player').val().length !== 0 && $('#second-player').val().length !== 0) {
+            $('#enter-player-names').removeClass('not-allowed');
+            $('#enter-player-names').addClass('button');
+        } else {
+            $('#enter-player-names').removeClass('button');
+            $('#enter-player-names').addClass('not-allowed');
+        }
+    }
+});
+
+$('#select-the-number-of-players').on('click', function () {
     if ($('input[name=number-of-players]:checked').val() == 1) {
+        $('#quiz-title').fadeOut(450);
         number_of_players = 1;
-        $('#quiz-title').fadeOut(450);
-        $('#number-of-players-section').fadeOut(450, function() {
-            $('#number-of-players-section').remove();
-            $('#player-name-section').fadeIn();
-            $('#quiz-title').html('Who\'s playing?');
-            $('#quiz-title').fadeIn();
-        });
-        // Hide error div
-        hideErrorsDiv();
-    } else if ($('input[name=number-of-players]:checked').val() == 2) {
-        number_of_players = 2;
-        $('#quiz-title').fadeOut(450);
-        $('#number-of-players-section').fadeOut(450, function() {
+        $('#number-of-players-section').fadeOut(450, function () {
             $('#number-of-players-section').remove();
             $('#player-names-section').fadeIn();
             $('#quiz-title').html('Who\'s playing?');
             $('#quiz-title').fadeIn();
         });
-        // Hide error div
+        hideErrorsDiv();
+    } else if ($('input[name=number-of-players]:checked').val() == 2) {
+        $('#quiz-title').fadeOut(450);
+        number_of_players = 2;
+        $('#number-of-players-section').fadeOut(450, function () {
+            $('#number-of-players-section').remove();
+            $('#player-names-section').fadeIn();
+            $('#second-player-section').show();
+            $('#quiz-title').html('Who\'s playing?');
+            $('#quiz-title').fadeIn();
+        });
         hideErrorsDiv();
     } else {
-        // Show error div
         $('.errors').html('You must select the number of players, goofy!');
         $('.errors').css('visibility', 'visible');
     }
 });
 
-// Start the quiz after name input
-$('.start').on('click', function() {
-    // If one player
-    if (number_of_players == 1){
-        if (!$('#one-player').val()) {
-            // Show error div
+$('#enter-player-names').on('click', function () {
+    if (number_of_players == 1) {
+        if (!$('#first-player').val()) {
             $('.errors').html('You haven\'t forgottone your name, have you, silly?');
             $('.errors').css('visibility', 'visible');
         } else {
+            $('#quiz-title').fadeOut(450);
             hideErrorsDiv();
-            first_player = $('#one-player').val();
+            first_player = $('#first-player').val();
             second_player = '';
-            $('#intro').fadeOut(400, function() {
-                $('#intro').remove();
-                $('#quiz').fadeIn();
-                getQuestions();
+            $('#player-names-section').fadeOut(450, function () {
+                $('#player-names-section').remove();
+                $('#category').fadeIn();
+                $('#quiz-title').html('What do we wanna learn?');
+                $('#quiz-title').fadeIn();
             });
         }
     } else {
@@ -75,42 +95,79 @@ $('.start').on('click', function() {
             $('.errors').html('Well, tell us who\'s playing versus who!');
             $('.errors').css('visibility', 'visible');
         } else {
+            $('#quiz-title').fadeOut(450);
             hideErrorsDiv();
+            $('#second-player-section').show();
             first_player = $('#first-player').val();
-            second_player = $('#second-player').val();;
-            // Start the quiz first time with first API call
-            $('#intro').fadeOut(400, function() {
-                getQuestions();
-                $('#intro').remove();
-                $('#second-player-score').fadeIn();
-                $('#round-number').fadeIn();
-                $('#quiz').fadeIn();
+            second_player = $('#second-player').val();
+            ;
+            $('#player-names-section').fadeOut(450, function () {
+                $('#player-names-section').remove();
+                $('#category').fadeIn();
+                $('#quiz-title').html('What do we wanna learn?');
+                $('#quiz-title').fadeIn();
             });
         }
     }
 });
 
-// Hide error display divs
+$('#choose-category').on('click', function () {
+    category = $('input[name=category]:checked').val();
+    if (category) {
+        $('#quiz-title').fadeOut(450);
+        hideErrorsDiv();
+        category_name = $('input[name=category]:checked').parent().next().html();
+        $('#category').fadeOut(450, function () {
+            $('#category').remove();
+            $('#difficulty').fadeIn();
+            $('#quiz-title').html('How hard do you want to go at it?');
+            $('#quiz-title').fadeIn();
+        });
+    } else {
+        $('.errors').html('Well, at least be courageous enough to select a category!');
+        $('.errors').css('visibility', 'visible');
+    }
+});
+
+$('#choose-difficulty').on('click', function () {
+    difficulty = $('input[name=difficulty]:checked').val();
+    if (difficulty) {
+        getQuestions();
+        $('#quiz-title').fadeOut(450);
+        hideErrorsDiv();
+        $('#intro').remove();
+        if (second_player) {
+            $('#second-player-score').fadeIn();
+            $('#player-turn').fadeIn();
+        }
+        $('#quiz').fadeIn();
+        $('#category-section').html('Category: ' + category_name);
+        $('#difficulty-section').html('Difficulty: ' + difficulty.charAt(0).toUpperCase() + difficulty.slice(1));
+        $('#category-section').fadeIn();
+        $('#difficulty-section').fadeIn();
+    } else {
+        $('.errors').html('Well, you cannot play on a non-existent difficulty!');
+        $('.errors').css('visibility', 'visible');
+    }
+});
+
 function hideErrorsDiv() {
     $('.errors').html('');
     $('.errors').css('visibility', 'hidden');
 }
 
-// Move progress bar
-function progress() {
-    width += 100/20;
+function moveProgressBar() {
+    width += 100 / 20;
     width > 0 ? $('#bar').css('color', '#fff') : $('#bar').css('color', '#000');
-    $(elem).animate({width : width + '%'}, 100);
-    elem.html(width.toFixed(2) * 1  + '%');
+    $(elem).animate({width: width + '%'}, 100);
+    elem.html(width.toFixed(2) * 1 + '%');
 }
 
-// Return 'point' or 'points'
 function singularOrPluralString(x) {
     return x == 1 ? ' point' : ' points';
 }
 
-// Shuffle answers
-function shuffle(a) {
+function shuffleAnswers(a) {
     for (let i = a.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [a[i], a[j]] = [a[j], a[i]];
@@ -118,11 +175,10 @@ function shuffle(a) {
     return a;
 }
 
-// API call
-function getQuestions(){
+function getQuestions() {
     $.get(
-        "https://opentdb.com/api.php?amount=20",
-        function(data) {
+        'https://opentdb.com/api.php?amount=20&category=' + category + '&difficulty=' + difficulty,
+        function (data) {
             for (let i = 0; i < data.results.length; i++) {
                 let answers = [];
                 for (let y = 0; y < data.results[i].incorrect_answers.length; y++) {
@@ -135,30 +191,34 @@ function getQuestions(){
                     answer: data.results[i].correct_answer,
                     correct: 1
                 });
-                shuffle(answers);
+                shuffleAnswers(answers);
                 let obj = {
                     question: data.results[i].question,
                     answers: answers,
                 };
                 questions.push(obj);
             }
-            // Start the quiz
             quiz();
         }
     );
 }
 
-// Start quiz
 function quiz() {
 
     $('#player-turn').html('Player Turn: ' + first_player);
     $('#player-one').html(first_player);
     $('#player-two').html(second_player);
 
-    // Show first question
     showNext();
 
-    // Submit handler
+    $('#container').on('change', 'input[name="answer"]', function () {
+        if (!answer_selected) {
+            $('#submit').removeClass('not-allowed');
+            $('#submit').addClass('button');
+            answer_selected = 1;
+        }
+    });
+
     $('#submit').on('click', function (e) {
 
         // Saves selected answer in user_answers array
@@ -174,11 +234,11 @@ function quiz() {
         if (submit_clicked == 1) return false;
 
         // Disable checkbox
-        $('input[name=answer]').attr("disabled",true);
+        $('input[name=answer]').attr("disabled", true);
         $('.checkmark').css('background-color', '#bbbbbb');
         $('input[type="radio"], span.checkmark, label.container').css('cursor', 'default');
 
-        $('#submit').css({'background-color' : '#bbbbbb', 'cursor' : 'not-allowed'});
+        $('#submit').addClass('not-allowed');
         $('#submit').removeClass('button');
         $('#submit').html('Submitted');
 
@@ -202,7 +262,7 @@ function quiz() {
                     number_of_points_first++;
                     $('#first-player-score').html(number_of_points_first);
                 } else {
-                    if(round % 2 == 0) {
+                    if (round % 2 == 0) {
                         number_of_points_second++;
                         $('#second-player-score').html(number_of_points_second);
                     } else {
@@ -228,11 +288,13 @@ function quiz() {
                 $('#answer-result').fadeIn(100);
             }
             submit_clicked = 1;
+            $('#next-question').removeClass('not-allowed');
+            $('#next-question').addClass('button');
         }
     });
 
     // Next question handler
-    $("#next-question").unbind("click").on('click', function (e) {
+    $("#next-question").unbind('click').on('click', function (e) {
 
         // If not submitted
         if (submit_clicked == 0) {
@@ -245,16 +307,15 @@ function quiz() {
         hideErrorsDiv();
 
         $('#submit').html('Submit');
-        $('#submit').addClass('button');
-        $('#submit').css({'background-color' : '#556ee2', 'cursor' : 'pointer'});
         $('input[type="radio"], span.checkmark, label.container').css('cursor', 'pointer');
 
         if (question_area.is(':animated'))
             return false;
 
         $('#answer-result').fadeOut(100);
+        answer_selected = 0;
         submit_clicked = 0;
-        progress();
+        moveProgressBar();
         question_counter++;
         showNext();
     });
@@ -268,7 +329,7 @@ function quiz() {
 
         // If game over
         if (round == 5) {
-            score = $('<p>',{id: 'pitanje'});
+            score = $('<p>', {id: 'pitanje'});
             round = 1;
             $('#first-player-score').html(0);
             $('#second-player-score').html(0);
@@ -333,9 +394,9 @@ function quiz() {
         let input = '';
 
         for (let i = 0; i < questions[index].answers.length; i++) {
-            item = $('<li style="display: inline-block; position: relative;">');
-            input = '<label class="container" style="position: absolute; left: 0; width: 100%;"><input type="radio" name="answer" style="position: absolute; left: 0; width: 100%;" value=' + questions[index].answers[i].correct + '><span class="checkmark"></span></label>';
-            input += '<span style="display: inline-block; margin-top: 3px; padding-left: 35px;">' + questions[index].answers[i].answer + '</span>';
+            item = $('<li>');
+            input = '<label class="container"><input type="radio" name="answer" value=' + questions[index].answers[i].correct + '><span class="checkmark"></span></label>';
+            input += '<span>' + questions[index].answers[i].answer + '</span>';
             item.append(input);
             radioList.append(item);
             radioList.append('<br>');
@@ -350,25 +411,29 @@ function quiz() {
     }
 
     // Show next element
-    function showNext(){
+    function showNext() {
         helper_counter++;
-        question_area.fadeOut(100, function() {
+        question_area.fadeOut(100, function () {
             // Enable checkbox on next question
-            $('input[name=answer]').attr("disabled",true);
+            $('input[name=answer]').attr('disabled', false);
             $('.checkmark').css('background-color', '#fff');
             $('#question').remove();
             // If round not over, show next question
-            if (helper_counter != 5){
+            if (helper_counter != 5) {
                 if (number_of_players == 2)
                     $('#round-number').show();
                 let next_question = createQuestionElement(question_counter);
                 question_area.append(next_question).fadeIn(200);
                 if (!(isNaN(user_answers[question_counter])))
-                    $('input[value='+user_answers[question_counter]+']').prop('checked', true);
+                    $('input[value=' + user_answers[question_counter] + ']').prop('checked', true);
 
                 $('#next-question').show();
                 $('#submit').show();
 
+                $('#next-question').removeClass('button');
+                $('#next-question').addClass('not-allowed');
+                $('#submit').removeClass('button');
+                $('#submit').addClass('not-allowed');
             }
             // Else show round end
             else {
@@ -389,14 +454,14 @@ function quiz() {
             if (user_answers[i] == 1)
                 numCorrect++;
 
-        if (numCorrect > localStorage.getItem("highscore")){
+        if (numCorrect > localStorage.getItem("highscore")) {
             if (typeof(Storage) !== "undefined")
                 localStorage.setItem("highscore", numCorrect);
             else
                 console.log("Sorry, your browser does not support Web Storage! 😞");
         }
 
-        let score = $('<p>',{id: 'question'});
+        let score = $('<p>', {id: 'question'});
         score.append('You\'ve got ' + numCorrect + ' corrent questions out of 5!');
 
         // Custom messages
@@ -426,7 +491,7 @@ function quiz() {
 
         // Return which round was played by who
         if (number_of_players != 1) {
-            let appendName = (round % 2 ? first_player: second_player);
+            let appendName = (round % 2 ? first_player : second_player);
             points.append('<p>Round ' + round + ': ' + numCorrect + singularOrPluralString(numCorrect) + ' - ' + appendName + '</p>');
         } else
             points.append('<p>Round ' + round + ': ' + numCorrect + singularOrPluralString(numCorrect) + '</p>');
@@ -439,17 +504,17 @@ function quiz() {
         question_counter_for_title = 0;
 
         // If game over
-        if (question_counter == 20){
+        if (question_counter == 20) {
             $('#restart').html('New game');
             variable = 0;
             width = -5;
-            progress();
+            moveProgressBar();
             question_counter = 0;
             points = $('<p>');
             user_answers = [];
             questions = [];
             localStorage.removeItem('highscore');
-            if (number_of_players != 1){
+            if (number_of_players != 1) {
                 if (number_of_points_first > number_of_points_second)
                     score.append('<p>Game over. ' + second_player + ' won!');
                 else if (number_of_points_first < number_of_points_second)

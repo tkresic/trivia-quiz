@@ -1,90 +1,189 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<meta charset="UTF-8">
-	<link rel="icon" href="img/favicon.png" type="image/x-icon" />
-	<title>Trivia Quiz</title>
-	<link rel="stylesheet" type="text/css" href="style/app.css">
-	<link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+    <meta charset="UTF-8">
+    <link rel="icon" href="img/favicon.png" type="image/x-icon">
+    <title>Trivia Quiz</title>
+    <link rel="stylesheet" type="text/css" href="style/app.css">
+    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
 </head>
 <body>
 <span id="answer-result"></span>
-<div id='container'>
-	<div class="errors">We haven't caught onto you yet!</div>
-	<div id="intro">
-		<div id='title'>
-			<h1 id="quiz-title">Welcome to Trivia quiz!</h1>
-		</div>
-		<div id="number-of-players-section">
-			Select the number of players
-			<br><br>
-			<label class="container player-number-padding"><input id="dva" type="radio" name="number-of-players" value="1"/>
-				<span class="checkmark"></span>
-			</label>
-			1
-			<br><br>
-			<label class="container player-number-padding"><input id="jedan" type="radio" name="number-of-players" value="2"/>
-				<span class="checkmark"></span>
-			</label>
-			2
-			<br><br>
-			<button class='button' id='next'>Next</button>
-		</div>
-		<div id="player-name-section" style="display:none;">
-			<div class="form-element">
-				<input class="form-control form-control-white form-element-field" type="text" id="one-player" name="name" placeholder="Enter your name">
-				<div class="form-element-bar form-element-bar-white"></div>
-				<label class="form-element-label form-element-label-white">
-					How should we call you?
-				</label>
-			</div>
-			<br><br>
-			<button class='button start start-game-1'>
-				Let's go!
-			</button>
-		</div>
-		<div id="player-names-section" style="display:none;;">
-			<div class="form-element">
-				<input class="form-control form-control-white form-element-field" type="text" id="first-player" name="name" placeholder="Enter your name">
-				<div class="form-element-bar form-element-bar-white"></div>
-				<label class="form-element-label form-element-label-white">
-					How should we call you?
-				</label>
-			</div>
-			<br><br>
-			<div class="form-element">
-				<input class="form-control form-control-white form-element-field" type="text" id="second-player" name="name" placeholder="Enter your opponent's name">
-				<div class="form-element-bar form-element-bar-white"></div>
-				<label class="form-element-label form-element-label-white">
-					How should we call your opponent?
-				</label>
-			</div>
-			<br><br>
-			<button class="button start start-game-2">Let's go!</button>
-		</div>
-		<div id="category" style="display: none;"></div>
-		<div id="difficulty" style="display: none;"></div>
-	</div>
-	<div id="quiz">
-		<h3 id="round-number"><span id="player-turn"></span></h1>
-			<h1 id="player-one"></h1>
-			<h1 id="first-player-score">0</h1>
-			<h1 id="player-two"></h1>
-			<h1 id="second-player-score">0</h1>
-			<div>
-				<h1 id="round">Round 1/4</h1>
-			</div>
-			<div id='question-area'></div>
-			<span id="highscore">Highscore</span>
-			<button id="submit" class="button">Submit</button>
-			<button id="next-question" class="button">Next question</button>
-			<button id="restart" class="button">Next round</button>
-			<div id="progress">
-				<div id="bar">0%</div>
-			</div>
-	</div>
+<div id="container">
+    <div class="errors">We haven't caught onto you yet!</div>
+    <div id="intro">
+        <div id="title">
+            <h1 id="quiz-title">Welcome to Trivia quiz!</h1>
+        </div>
+        <div id="number-of-players-section">
+            <span>Select the number of players:</span>
+            <br><br>
+            <ul>
+                <li>
+                    <label class="container">
+                        <input type="radio" name="number-of-players" value="1">
+                        <span class="checkmark"></span>
+                    </label>
+                    <span>1</span>
+                </li>
+                <br>
+                <li style="margin-left: -3px;">
+                    <label class="container">
+                        <input type="radio" name="number-of-players" value="2">
+                        <span class="checkmark"></span>
+                    </label>
+                    <span>2</span>
+                </li>
+            </ul>
+            <br>
+            <button id="select-the-number-of-players" class="not-allowed">Next</button>
+        </div>
+        <div id="player-names-section" style="display:none;">
+            <div class="form-element">
+                <input class="form-control form-control-white form-element-field" type="text" id="first-player"
+                       name="name" placeholder="Enter your name">
+                <div class="form-element-bar form-element-bar-white"></div>
+                <label class="form-element-label form-element-label-white" for="name">
+                    How should we call you?
+                </label>
+            </div>
+            <br><br>
+            <div id="second-player-section" class="form-element" style="display: none;">
+                <input class="form-control form-control-white form-element-field" type="text" id="second-player"
+                       name="name" placeholder="Enter your opponent's name">
+                <div class="form-element-bar form-element-bar-white"></div>
+                <label class="form-element-label form-element-label-white" for="name">
+                    How should we call your opponent?
+                </label>
+                <br><br>
+            </div>
+            <button id="enter-player-names" class="not-allowed">Next</button>
+        </div>
+        <div id="category" style="display: none;">
+            <span>Choose category:</span>
+            <br><br>
+            <ul>
+                <li class="list-style">
+                    <label class="container">
+                        <input id="any-category" type="radio" name="category" value="">
+                        <span class="checkmark"></span>
+                    </label>
+                    <span>Any Category</span>
+                </li>
+                <li class="list-style">
+                    <label class="container">
+                        <input id="general-knowledge" type="radio" name="category" value="9">
+                        <span class="checkmark"></span>
+                    </label>
+                    <span>General Knowledge</span>
+                </li>
+                <li class="list-style">
+                    <label class="container">
+                        <input id="sports" type="radio" name="category" value="21">
+                        <span class="checkmark"></span>
+                    </label>
+                    <span>Sports</span>
+                </li>
+                <br>
+                <li class="list-style">
+                    <label class="container">
+                        <input id="geography" type="radio" name="category" value="22">
+                        <span class="checkmark"></span>
+                    </label>
+                    <span>Geography</span>
+                </li>
+                <li class="list-style">
+                    <label class="container">
+                        <input id="mathematics" type="radio" name="category" value="19">
+                        <span class="checkmark"></span>
+                    </label>
+                    <span>Mathematics</span>
+                </li>
+                <li class="list-style">
+                    <label class="container">
+                        <input id="history" type="radio" name="category" value="23">
+                        <span class="checkmark"></span>
+                    </label>
+                    <span>History</span>
+                </li>
+                <br>
+                <li class="list-style">
+                    <label class="container">
+                        <input id="computers" type="radio" name="category" value="18">
+                        <span class="checkmark"></span>
+                    </label>
+                    <span>Computers</span>
+                </li>
+                <li class="list-style">
+                    <label class="container">
+                        <input id="science-and-nature" type="radio" name="category" value="17">
+                        <span class="checkmark"></span>
+                    </label>
+                    <span>Science & Nature</span>
+                </li>
+                <li class="list-style">
+                    <label class="container">
+                        <input id="film" type="radio" name="category" value="11">
+                        <span class="checkmark"></span>
+                    </label>
+                    <span>Film</span>
+                </li>
+            </ul>
+            <br>
+            <button id="choose-category" class="not-allowed">Next</button>
+        </div>
+        <div id="difficulty" style="display: none;">
+            <span>Select difficulty:</span>
+            <br><br>
+            <ul>
+                <li class="list-style-difficulty">
+                    <label class="container">
+                        <input type="radio" name="difficulty" value="easy">
+                        <span class="checkmark"></span>
+                    </label>
+                    <span>Easy</span>
+                </li>
+                <br>
+                <li class="list-style-difficulty">
+                    <label class="container">
+                        <input type="radio" name="difficulty" value="medium">
+                        <span class="checkmark"></span>
+                    </label>
+                    <span>Medium</span>
+                </li>
+                <br>
+                <li class="list-style-difficulty" style="margin-left: 17px;">
+                    <label class="container">
+                        <input type="radio" name="difficulty" value="hard">
+                        <span class="checkmark"></span>
+                    </label>
+                    <span>Hard</span>
+                </li>
+            </ul>
+            <br>
+            <button id="choose-difficulty" class="not-allowed">Let's go!</button>
+        </div>
+    </div>
+    <div id="quiz">
+        <h3 id="player-turn"></h3>
+        <h1 id="player-one"></h1>
+        <h1 id="first-player-score">0</h1>
+        <h1 id="player-two"></h1>
+        <h1 id="second-player-score">0</h1>
+        <h1 id="round">Round 1/4</h1>
+        <div id="question-area"></div>
+        <span id="highscore">Highscore</span>
+        <button id="category-section">Category:</button>
+        <button id="difficulty-section">Difficulty:</button>
+        <button id="submit" class="not-allowed">Submit</button>
+        <button id="next-question" class="not-allowed">Next question</button>
+        <button id="restart" class="button">Next round</button>
+        <div id="progress">
+            <div id="bar">0%</div>
+        </div>
+    </div>
 </div>
 </body>
-<script type='text/javascript' src='scripts/jquery.js'></script>
-<script type='text/javascript' src='scripts/app.js' charset="utf-8"></script>
+<script type="text/javascript" src="scripts/jquery.js"></script>
+<script type="text/javascript" src="scripts/app.js" charset="utf-8"></script>
 </html>
