@@ -12,10 +12,8 @@
 <div id="container">
     <div class="errors">We haven't caught onto you yet!</div>
     <div id="intro">
-        <div id="title">
-            <h1 id="quiz-title">Welcome to Trivia quiz!</h1>
-        </div>
         <div id="number-of-players-section">
+            <h1 class="title">Welcome to Trivia quiz!</h1>
             <span>Select the number of players:</span>
             <br><br>
             <ul>
@@ -39,27 +37,32 @@
             <button id="select-the-number-of-players" class="not-allowed">Next</button>
         </div>
         <div id="player-names-section" style="display:none;">
-            <div class="form-element">
-                <input class="form-control form-control-white form-element-field" type="text" id="first-player"
-                       name="name" placeholder="Enter your name">
-                <div class="form-element-bar form-element-bar-white"></div>
-                <label class="form-element-label form-element-label-white" for="name">
-                    How should we call you?
-                </label>
-            </div>
-            <br><br>
-            <div id="second-player-section" class="form-element" style="display: none;">
-                <input class="form-control form-control-white form-element-field" type="text" id="second-player"
-                       name="name" placeholder="Enter your opponent's name">
-                <div class="form-element-bar form-element-bar-white"></div>
-                <label class="form-element-label form-element-label-white" for="name">
-                    How should we call your opponent?
-                </label>
+            <h1 class="title">Who's playing?</h1>
+            <br>
+            <form id="player-names-form">
+                <div class="form-element">
+                    <input class="form-control form-control-white form-element-field" type="text" id="first-player"
+                           name="name" placeholder="Enter your name">
+                    <div class="form-element-bar form-element-bar-white"></div>
+                    <label class="form-element-label form-element-label-white" for="name">
+                        How should we call you?
+                    </label>
+                </div>
                 <br><br>
-            </div>
-            <button id="enter-player-names" class="not-allowed">Next</button>
+                <div id="second-player-section" class="form-element" style="display: none;">
+                    <input class="form-control form-control-white form-element-field" type="text" id="second-player"
+                           name="name" placeholder="Enter your opponent's name">
+                    <div class="form-element-bar form-element-bar-white"></div>
+                    <label class="form-element-label form-element-label-white" for="name">
+                        How should we call your opponent?
+                    </label>
+                    <br><br>
+                </div>
+                <button type="submit" id="enter-player-names" class="not-allowed">Next</button>
+            </form>
         </div>
         <div id="category" style="display: none;">
+            <h1 class="title">What do we wanna learn?</h1>
             <span>Choose category:</span>
             <br><br>
             <ul>
@@ -133,6 +136,7 @@
             <button id="choose-category" class="not-allowed">Next</button>
         </div>
         <div id="difficulty" style="display: none;">
+            <h1 class="title">How hard do you want to go at it?</h1>
             <span>Select difficulty:</span>
             <br><br>
             <ul>
@@ -165,11 +169,15 @@
         </div>
     </div>
     <div id="quiz">
-        <h3 id="player-turn"></h3>
-        <h1 id="player-one"></h1>
-        <h1 id="first-player-score">0</h1>
-        <h1 id="player-two"></h1>
-        <h1 id="second-player-score">0</h1>
+        <button id="player-turn"></button>
+        <button id="player-one">
+            <span id="player-one-name"></span>
+            <span id="first-player-score">0</span>
+        </button>
+        <button id="player-two">
+            <span id="player-two-name"></span>
+            <span id="second-player-score">0</span>
+        </button>
         <h1 id="round">Round 1/4</h1>
         <div id="question-area"></div>
         <span id="highscore">Highscore</span>
