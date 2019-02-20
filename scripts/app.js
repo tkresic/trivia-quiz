@@ -11,60 +11,47 @@ number_of_points_first = $('#first-player-score').html(),
 localStorage.setItem('highscore', 0);
 
 $('input[name="number-of-players"]').change(function () {
-    $('#select-the-number-of-players').removeClass('not-allowed');
-    $('#select-the-number-of-players').addClass('button');
+    addAndRemoveClass('select-the-number-of-players', 'not-allowed', 'button');
 });
 
 $('input[name="category"]').change(function () {
-    $('#choose-category').removeClass('not-allowed');
-    $('#choose-category').addClass('button');
+    addAndRemoveClass('choose-category', 'not-allowed', 'button');
 });
 
 $('input[name="difficulty"]').change(function () {
-    $('#choose-difficulty').removeClass('not-allowed');
-    $('#choose-difficulty').addClass('button');
+    addAndRemoveClass('choose-difficulty', 'not-allowed', 'button');
 });
 
 $('input[name="name"]').on('keyup', function () {
-    if (number_of_players == 1) {
-        if ($('#first-player').val().length > 0) {
-            $('#enter-player-names').removeClass('not-allowed');
-            $('#enter-player-names').addClass('button');
-        } else {
-            $('#enter-player-names').removeClass('button');
-            $('#enter-player-names').addClass('not-allowed');
-        }
-    } else {
-        if ($('#first-player').val().length !== 0 && $('#second-player').val().length !== 0) {
-            $('#enter-player-names').removeClass('not-allowed');
-            $('#enter-player-names').addClass('button');
-        } else {
-            $('#enter-player-names').removeClass('button');
-            $('#enter-player-names').addClass('not-allowed');
-        }
-    }
+    if (number_of_players == 1)
+        $('#first-player').val().length > 0 ? addAndRemoveClass('enter-player-names', 'not-allowed', 'button') : addAndRemoveClass('enter-player-names', 'button', 'not-allowed');
+    else
+        ($('#first-player').val().length !== 0 && $('#second-player').val().length !== 0) ? addAndRemoveClass('enter-player-names', 'not-allowed', 'button') : addAndRemoveClass('enter-player-names', 'button', 'not-allowed');
 });
 
 $('#select-the-number-of-players').on('click', function () {
+    let parent_width = $('#number-of-players-section').parent().width();
+    let width = $('#number-of-players-section').width();
+    let left_width_to_parent = (parent_width - width) / 2;
     if ($('input[name=number-of-players]:checked').val() == 1) {
-        $('#quiz-title').fadeOut(450);
         number_of_players = 1;
-        $('#number-of-players-section').fadeOut(450, function () {
-            $('#number-of-players-section').remove();
+        $('#number-of-players-section').animate({
+            opacity: 'hide',
+            right: left_width_to_parent + 'px',
+        }, left_width_to_parent, 'linear', function () {
+            $(this).remove();
             $('#player-names-section').fadeIn();
-            $('#quiz-title').html('Who\'s playing?');
-            $('#quiz-title').fadeIn();
         });
         hideErrorsDiv();
     } else if ($('input[name=number-of-players]:checked').val() == 2) {
-        $('#quiz-title').fadeOut(450);
         number_of_players = 2;
-        $('#number-of-players-section').fadeOut(450, function () {
-            $('#number-of-players-section').remove();
+        $('#number-of-players-section').animate({
+            opacity: 'hide',
+            right: left_width_to_parent + 'px',
+        }, left_width_to_parent, 'linear', function () {
+            $(this).remove();
             $('#player-names-section').fadeIn();
             $('#second-player-section').show();
-            $('#quiz-title').html('Who\'s playing?');
-            $('#quiz-title').fadeIn();
         });
         hideErrorsDiv();
     } else {
@@ -73,55 +60,62 @@ $('#select-the-number-of-players').on('click', function () {
     }
 });
 
-$('#enter-player-names').on('click', function () {
+$('#player-names-form').on('submit', function (e) {
+    e.preventDefault();
+    let parent_width = $('#player-names-section').parent().width();
+    let width = $('#player-names-section').width();
+    let left_width_to_parent = (parent_width - width) / 2;
     if (number_of_players == 1) {
         if (!$('#first-player').val()) {
             $('.errors').html('You haven\'t forgottone your name, have you, silly?');
             $('.errors').css('visibility', 'visible');
         } else {
-            $('#quiz-title').fadeOut(450);
             hideErrorsDiv();
             first_player = $('#first-player').val();
             second_player = '';
-            $('#player-names-section').fadeOut(450, function () {
-                $('#player-names-section').remove();
+            $('#player-names-section').animate({
+                opacity: 'hide',
+                right: left_width_to_parent + 'px',
+            }, left_width_to_parent, 'linear', function () {
+                $(this).remove();
                 $('#category').fadeIn();
-                $('#quiz-title').html('What do we wanna learn?');
-                $('#quiz-title').fadeIn();
             });
+            hideErrorsDiv();
         }
     } else {
         if (!$('#first-player').val() || !$('#second-player').val()) {
             $('.errors').html('Well, tell us who\'s playing versus who!');
             $('.errors').css('visibility', 'visible');
         } else {
-            $('#quiz-title').fadeOut(450);
             hideErrorsDiv();
             $('#second-player-section').show();
             first_player = $('#first-player').val();
             second_player = $('#second-player').val();
-            ;
-            $('#player-names-section').fadeOut(450, function () {
-                $('#player-names-section').remove();
+            $('#player-names-section').animate({
+                opacity: 'hide',
+                right: left_width_to_parent + 'px',
+            }, left_width_to_parent, 'linear', function () {
+                $(this).remove();
                 $('#category').fadeIn();
-                $('#quiz-title').html('What do we wanna learn?');
-                $('#quiz-title').fadeIn();
             });
         }
     }
 });
 
 $('#choose-category').on('click', function () {
+    let parent_width = $('#category').parent().width();
+    let width = $('#category').width();
+    let left_width_to_parent = (parent_width - width) / 2;
     category = $('input[name=category]:checked').val();
-    if (category) {
-        $('#quiz-title').fadeOut(450);
+    if (category || category === '') {
         hideErrorsDiv();
         category_name = $('input[name=category]:checked').parent().next().html();
-        $('#category').fadeOut(450, function () {
-            $('#category').remove();
+        $('#category').animate({
+            opacity: 'hide',
+            right: left_width_to_parent + 'px',
+        }, left_width_to_parent, 'linear', function () {
+            $(this).remove();
             $('#difficulty').fadeIn();
-            $('#quiz-title').html('How hard do you want to go at it?');
-            $('#quiz-title').fadeIn();
         });
     } else {
         $('.errors').html('Well, at least be courageous enough to select a category!');
@@ -132,19 +126,26 @@ $('#choose-category').on('click', function () {
 $('#choose-difficulty').on('click', function () {
     difficulty = $('input[name=difficulty]:checked').val();
     if (difficulty) {
-        getQuestions();
-        $('#quiz-title').fadeOut(450);
         hideErrorsDiv();
-        $('#intro').remove();
-        if (second_player) {
-            $('#second-player-score').fadeIn();
-            $('#player-turn').fadeIn();
-        }
-        $('#quiz').fadeIn();
-        $('#category-section').html('Category: ' + category_name);
-        $('#difficulty-section').html('Difficulty: ' + difficulty.charAt(0).toUpperCase() + difficulty.slice(1));
-        $('#category-section').fadeIn();
-        $('#difficulty-section').fadeIn();
+        getQuestions();
+        $('#difficulty').animate({
+            opacity: 'hide',
+            right: '400px',
+        }, 400, 'linear', function () {
+            $(this).remove();
+            if (second_player) {
+                $('#second-player-score').show();
+                $('#player-turn').show();
+            }
+            $('#player-turn').html('Player turn: ' + first_player);
+            $('#player-one-name').html(first_player);
+            $('#player-two-name').html(second_player);
+            $('#category-section').html('Category: ' + category_name);
+            $('#difficulty-section').html('Difficulty: ' + difficulty.charAt(0).toUpperCase() + difficulty.slice(1));
+            $('#category-section').show();
+            $('#difficulty-section').show();
+            $('#quiz').fadeIn();
+        });
     } else {
         $('.errors').html('Well, you cannot play on a non-existent difficulty!');
         $('.errors').css('visibility', 'visible');
@@ -175,9 +176,16 @@ function shuffleAnswers(a) {
     return a;
 }
 
+function addAndRemoveClass(item, remove_class, add_class) {
+    $('#' + item).removeClass(remove_class);
+    $('#' + item).addClass(add_class);
+}
+
 function getQuestions() {
+    let url = category == 19 ? 'https://opentdb.com/api.php?amount=20&category=' + category : 'https://opentdb.com/api.php?amount=20&category=' + category + '&difficulty=' + difficulty;
     $.get(
-        'https://opentdb.com/api.php?amount=20&category=' + category + '&difficulty=' + difficulty,
+        // Mathematics category has total of 41 questions (easy: 11, medium: 19, hard: 11)
+        url,
         function (data) {
             for (let i = 0; i < data.results.length; i++) {
                 let answers = [];
@@ -204,10 +212,6 @@ function getQuestions() {
 }
 
 function quiz() {
-
-    $('#player-turn').html('Player Turn: ' + first_player);
-    $('#player-one').html(first_player);
-    $('#player-two').html(second_player);
 
     showNext();
 
@@ -528,7 +532,6 @@ function quiz() {
             $('#question').empty();
             number_of_points_second = 0;
             number_of_points_first = 0;
-            $('.addToCartButton').unbind('click');
         }
         return score;
     }
