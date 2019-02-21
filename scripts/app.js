@@ -6,27 +6,31 @@ let first_player, second_player, number_of_players, category, category_name, dif
 number_of_points_first = $('#first-player-score').html(),
     run = $('#round'), number_of_points_second = $('#second-player-score').html(),
     points = $('<p>'), helper_counter = -1, questions = [], incorrect_answers = [],
-    correct_answer = [], answer_selected = 0;
+    correct_answer = [], answer_selected = 0, quiz_started = 0;
 
 localStorage.setItem('highscore', 0);
 
 $('input[name="number-of-players"]').change(function () {
-    addAndRemoveClass('select-the-number-of-players', 'not-allowed', 'button');
+    addAndRemoveClass('select-the-number-of-players', 'button', 'not-allowed');
 });
 
 $('input[name="category"]').change(function () {
-    addAndRemoveClass('choose-category', 'not-allowed', 'button');
+    addAndRemoveClass('choose-category', 'button', 'not-allowed');
 });
 
 $('input[name="difficulty"]').change(function () {
-    addAndRemoveClass('choose-difficulty', 'not-allowed', 'button');
+    addAndRemoveClass('choose-difficulty', 'button', 'not-allowed');
 });
 
 $('input[name="name"]').on('keyup', function () {
     if (number_of_players == 1)
-        $('#first-player').val().length > 0 ? addAndRemoveClass('enter-player-names', 'not-allowed', 'button') : addAndRemoveClass('enter-player-names', 'button', 'not-allowed');
-    else
-        ($('#first-player').val().length !== 0 && $('#second-player').val().length !== 0) ? addAndRemoveClass('enter-player-names', 'not-allowed', 'button') : addAndRemoveClass('enter-player-names', 'button', 'not-allowed');
+        $('#first-player').val().length > 0 ? addAndRemoveClass('enter-player-names', 'button', 'not-allowed') : addAndRemoveClass('enter-player-names', 'not-allowed', 'button');
+    else {
+        if (($('#first-player').val().length !== 0 && $('#second-player').val().length !== 0) && ($('#first-player').val().toLowerCase() != $('#second-player').val().toLowerCase()))
+            addAndRemoveClass('enter-player-names', 'button', 'not-allowed');
+        else
+            addAndRemoveClass('enter-player-names', 'not-allowed', 'button');
+    }
 });
 
 $('#select-the-number-of-players').on('click', function () {
@@ -55,7 +59,7 @@ $('#select-the-number-of-players').on('click', function () {
         });
         hideErrorsDiv();
     } else {
-        $('.errors').html('You must select the number of players, goofy!');
+        $('.message').html('You must select the number of players, goofy!');
         $('.errors').css('visibility', 'visible');
     }
 });
@@ -67,12 +71,16 @@ $('#player-names-form').on('submit', function (e) {
     let left_width_to_parent = (parent_width - width) / 2;
     if (number_of_players == 1) {
         if (!$('#first-player').val()) {
-            $('.errors').html('You haven\'t forgottone your name, have you, silly?');
+            $('.message').html('You haven\'t forgottone your name, have you, silly?');
+            $('.errors').css('visibility', 'visible');
+        } else if ($('#first-player').val().length > 18) {
+            $('.message').html('Sorry, but maximum name length is 18 characters! 😞');
             $('.errors').css('visibility', 'visible');
         } else {
             hideErrorsDiv();
             first_player = $('#first-player').val();
             second_player = '';
+            $('#player-one-name').html(first_player);
             $('#player-names-section').animate({
                 opacity: 'hide',
                 right: left_width_to_parent + 'px',
@@ -84,13 +92,38 @@ $('#player-names-form').on('submit', function (e) {
         }
     } else {
         if (!$('#first-player').val() || !$('#second-player').val()) {
-            $('.errors').html('Well, tell us who\'s playing versus who!');
+            $('.message').html('Well, tell us who\'s playing versus who!');
+            $('.errors').css('visibility', 'visible');
+        } else if ($('#first-player').val().toLowerCase() == $('#second-player').val().toLowerCase()) {
+            $('.message').html('If you want to play against yourself, you could\'ve went solo! 😀');
+            $('.errors').css('visibility', 'visible');
+        } else if ($('#first-player').val().length > 18 || $('#second-player').val().length > 18) {
+            $('.message').html('Sorry, but maximum name length is 18 characters! 😞');
             $('.errors').css('visibility', 'visible');
         } else {
             hideErrorsDiv();
             $('#second-player-section').show();
             first_player = $('#first-player').val();
             second_player = $('#second-player').val();
+            $('#player-one-name').html(first_player);
+            $('#player-two-name').html(second_player);
+            if (first_player.length >= second_player.length) {
+                let tmp_btn = $('#player-one').clone().appendTo('body').css({
+                    'display': 'block',
+                    'visibility': 'hidden'
+                });
+                let tmp_btn_width = tmp_btn.outerWidth();
+                tmp_btn.remove();
+                $('#player-two').css('width', tmp_btn_width + 'px')
+            } else {
+                let tmp_btn = $('#player-two').clone().appendTo('body').css({
+                    'display': 'block',
+                    'visibility': 'hidden'
+                });
+                let tmp_btn_width = tmp_btn.outerWidth();
+                tmp_btn.remove();
+                $('#player-one').css('width', tmp_btn_width + 'px');
+            }
             $('#player-names-section').animate({
                 opacity: 'hide',
                 right: left_width_to_parent + 'px',
@@ -118,14 +151,16 @@ $('#choose-category').on('click', function () {
             $('#difficulty').fadeIn();
         });
     } else {
-        $('.errors').html('Well, at least be courageous enough to select a category!');
+        $('.message').html('Well, at least be courageous enough to select a category!');
         $('.errors').css('visibility', 'visible');
     }
 });
 
 $('#choose-difficulty').on('click', function () {
+    if (quiz_started) return;
     difficulty = $('input[name=difficulty]:checked').val();
     if (difficulty) {
+        quiz_started = 1;
         hideErrorsDiv();
         getQuestions();
         $('#difficulty').animate({
@@ -133,13 +168,12 @@ $('#choose-difficulty').on('click', function () {
             right: '400px',
         }, 400, 'linear', function () {
             $(this).remove();
+            $('#player-one').show();
             if (second_player) {
-                $('#second-player-score').show();
+                $('#player-two').show();
                 $('#player-turn').show();
             }
             $('#player-turn').html('Player turn: ' + first_player);
-            $('#player-one-name').html(first_player);
-            $('#player-two-name').html(second_player);
             $('#category-section').html('Category: ' + category_name);
             $('#difficulty-section').html('Difficulty: ' + difficulty.charAt(0).toUpperCase() + difficulty.slice(1));
             $('#category-section').show();
@@ -147,13 +181,13 @@ $('#choose-difficulty').on('click', function () {
             $('#quiz').fadeIn();
         });
     } else {
-        $('.errors').html('Well, you cannot play on a non-existent difficulty!');
+        $('.message').html('Well, you cannot play on a non-existent difficulty!');
         $('.errors').css('visibility', 'visible');
     }
 });
 
 function hideErrorsDiv() {
-    $('.errors').html('');
+    $('.message').html('');
     $('.errors').css('visibility', 'hidden');
 }
 
@@ -176,7 +210,7 @@ function shuffleAnswers(a) {
     return a;
 }
 
-function addAndRemoveClass(item, remove_class, add_class) {
+function addAndRemoveClass(item, add_class, remove_class) {
     $('#' + item).removeClass(remove_class);
     $('#' + item).addClass(add_class);
 }
@@ -229,7 +263,7 @@ function quiz() {
         choose();
 
         if (isNaN(user_answers[question_counter])) {
-            $('.errors').html('To get a question right, one must answer it!');
+            $('.message').html('To get a question right, one must answer it!');
             $('.errors').css('visibility', 'visible');
             return false;
         }
@@ -253,7 +287,7 @@ function quiz() {
 
         // If not selected
         if (isNaN(user_answers[question_counter])) {
-            $('.errors').html('To get a question right, one must answer it!');
+            $('.message').html('To get a question right, one must answer it!');
             $('.errors').css('visibility', 'visible');
         } else {
             hideErrorsDiv();
@@ -274,22 +308,22 @@ function quiz() {
                         $('#first-player-score').html(number_of_points_first);
                     }
                 }
-                $('#answer-result').css('background', '#196b19');
-                $('#answer-result').html('Correct answer. Good work!');
-                $('#answer-result').fadeIn(100);
+                $('.answer-result').css('background', 'rgb(35, 125, 35)');
+                $('.answer-result').html('Correct answer. Good work!');
+                $('.answer-result').css('visibility', 'visible');
             } else {
-                $('#answer-result').css('background', '#c11c1c');
+                $('.answer-result').css('background', '#c11c1c');
                 $('input[name="answer"]:checked ~ .checkmark').css('background-color', 'rgb(193, 28, 28)');
-                $('#answer-result').html('Incorrect answer. ');
+                $('.answer-result').html('Incorrect answer. ');
                 for (let i = 0; i < questions[question_counter].answers.length; i++) {
                     if (questions[question_counter].answers[i].correct == 1) {
-                        $('#answer-result').append('The correct answer was ' + questions[question_counter].answers[i].answer + '.');
+                        $('.answer-result').append('The correct answer was ' + questions[question_counter].answers[i].answer + '.');
                         let cor = $('input[name="answer"] ~ .checkmark')[i];
                         $(cor).addClass('correct-answer');
                         $(cor).css('background-color', '#196b19');
                     }
                 }
-                $('#answer-result').fadeIn(100);
+                $('.answer-result').css('visibility', 'visible');
             }
             submit_clicked = 1;
             $('#next-question').removeClass('not-allowed');
@@ -302,7 +336,7 @@ function quiz() {
 
         // If not submitted
         if (submit_clicked == 0) {
-            $('.errors').html('First tell us the answer to this, then we\'ll give you the next question 🙂');
+            $('.message').html('First tell us the answer to this, then we\'ll give you the next question 🙂');
             $('.errors').css('visibility', 'visible');
             return false;
         }
@@ -316,7 +350,7 @@ function quiz() {
         if (question_area.is(':animated'))
             return false;
 
-        $('#answer-result').fadeOut(100);
+        $('.answer-result').css('visibility', 'hidden');
         answer_selected = 0;
         submit_clicked = 0;
         moveProgressBar();
@@ -343,7 +377,7 @@ function quiz() {
             $('#round').html('Round ' + round + '/4');
             $('#restart').html('Next question');
             if (number_of_players != 1)
-                round % 2 ? $('#player-turn').html('Player Turn: ' + first_player) : $('#player-turn').html('Player Turn: ' + second_player);
+                round % 2 ? $('#player-turn').html('Player turn: ' + first_player) : $('#player-turn').html('Player Turn: ' + second_player);
 
             // Start quiz with new API call
             getQuestions();
@@ -352,8 +386,15 @@ function quiz() {
 
         $('#round').html('Round ' + round + '/4');
 
-        if (number_of_players != 1)
-            round % 2 ? $('#player-turn').html('Player Turn: ' + first_player) : $('#player-turn').html('Player Turn: ' + second_player);
+        if (number_of_players != 1) {
+            if (round % 2) {
+                $('#player-turn').html('Player turn: ' + first_player);
+                $('#player-turn').css('background-color', '#e09867');
+            } else {
+                $('#player-turn').html('Player turn: ' + second_player);
+                $('#player-turn').css('background-color', '#6599a0');
+            }
+        }
 
         if (question_area.is(':animated'))
             return false;
