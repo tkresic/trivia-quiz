@@ -8,9 +8,13 @@
     <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
 </head>
 <body>
-<span id="answer-result"></span>
+<div class="results">
+    <span class="answer-result"></span>
+</div>
+<div class="errors">
+    <span class="message"></span>
+</div>
 <div id="container">
-    <div class="errors">We haven't caught onto you yet!</div>
     <div id="intro">
         <div id="number-of-players-section">
             <h1 class="title">Welcome to Trivia quiz!</h1>
@@ -42,7 +46,7 @@
             <form id="player-names-form">
                 <div class="form-element">
                     <input class="form-control form-control-white form-element-field" type="text" id="first-player"
-                           name="name" placeholder="Enter your name">
+                           name="name" placeholder="Enter your name" maxlength="18">
                     <div class="form-element-bar form-element-bar-white"></div>
                     <label class="form-element-label form-element-label-white" for="name">
                         How should we call you?
@@ -51,7 +55,7 @@
                 <br><br>
                 <div id="second-player-section" class="form-element" style="display: none;">
                     <input class="form-control form-control-white form-element-field" type="text" id="second-player"
-                           name="name" placeholder="Enter your opponent's name">
+                           name="name" placeholder="Enter your opponent's name" maxlength="18">
                     <div class="form-element-bar form-element-bar-white"></div>
                     <label class="form-element-label form-element-label-white" for="name">
                         How should we call your opponent?
@@ -171,12 +175,14 @@
     <div id="quiz">
         <button id="player-turn"></button>
         <button id="player-one">
-            <span id="player-one-name"></span>
-            <span id="first-player-score">0</span>
+            <span id="player-one-name" class="float-left"></span>
+            &nbsp;&nbsp;
+            <span id="first-player-score" class="float-right">0</span>
         </button>
         <button id="player-two">
-            <span id="player-two-name"></span>
-            <span id="second-player-score">0</span>
+            <span id="player-two-name" class="float-left"></span>
+            &nbsp;&nbsp;
+            <span id="second-player-score" class="float-right">0</span>
         </button>
         <h1 id="round">Round 1/4</h1>
         <div id="question-area"></div>
