@@ -358,10 +358,15 @@ function quiz() {
         showNext();
     });
 
+    $('#restart-quiz').unbind("click").on('click', function (e) {
+        window.location.reload(false);
+    });
+
     // Restart game handler
     $('#restart').unbind("click").on('click', function (e) {
 
         e.preventDefault();
+        $('#restart-quiz').css("display", "none");
         $('#highscore').hide();
         round++;
 
@@ -551,6 +556,7 @@ function quiz() {
         // If game over
         if (question_counter == 20) {
             $('#restart').html('New game');
+            $('#restart-quiz').css("display", "block");
             variable = 0;
             width = -5;
             moveProgressBar();

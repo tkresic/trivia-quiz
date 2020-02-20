@@ -9,7 +9,7 @@ html, body {
 
 body {
     font-family: Open Sans;
-    background: linear-gradient(45deg, #4272b2, #7b01a8);
+    background: linear-gradient(45deg, #000000, #845993);
     background-repeat: no-repeat;
 }
 
@@ -154,7 +154,7 @@ ul {
     background-color: #fff;
     border-radius: 5px;
     color: #413a3a;
-    height: 450px;
+    height: 500px;
     font-weight: bold;
     box-shadow: 5px 5px 5px #293277eb;
 }
@@ -218,6 +218,14 @@ ul {
     bottom: 70px;
     right: 10px;
     display: none;
+    width: 130px;
+}
+
+#restart-quiz {
+    display: none;
+    position: absolute;
+    bottom: 70px;
+    right: 160px;
     width: 130px;
 }
 
